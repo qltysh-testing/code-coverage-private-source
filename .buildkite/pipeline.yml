@@ -1,0 +1,18 @@
+steps:
+  - label: ":ruby: Ruby 3.1 Tests"
+    command: |
+      bundle install
+      bundle exec rspec --require spec_helper
+    artifact_paths:
+      - "coverage/coverage.json"
+
+  - wait
+
+  - label: ":chart_with_upwards_trend: Coverage Report"
+    command: |
+      # Download the coverage artifact
+      buildkite-agent artifact download "coverage/coverage.json" .
+
+      curl https://qlty.sh | sh
+      qlty coverage publish coverage/coverage.json
+    depends_on: "ruby-3-1-tests"

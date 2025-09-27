@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+
+# Set up rbenv if available
+if [ -d "$HOME/.rbenv" ]; then
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  eval "$(rbenv init -)"
+fi
+
+# Install Ruby version if .ruby-version file exists
+if [ -f ".ruby-version" ]; then
+  RUBY_VERSION=$(cat .ruby-version)
+  echo "Setting up Ruby $RUBY_VERSION"
+
+  # Install Ruby version if not already installed
+  if ! rbenv versions | grep -q "$RUBY_VERSION"; then
+    rbenv install "$RUBY_VERSION"
+  fi
+
+  rbenv local "$RUBY_VERSION"
+fi
