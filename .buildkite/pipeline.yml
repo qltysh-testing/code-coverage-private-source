@@ -1,5 +1,6 @@
 steps:
   - label: ":ruby: Ruby 3.1 Tests"
+    key: "ruby-tests"
     command: |
       bundle install
       bundle exec rspec --require spec_helper
@@ -15,4 +16,4 @@ steps:
 
       curl https://qlty.sh | sh
       qlty coverage publish coverage/coverage.json
-    depends_on: "ruby-3-1-tests"
+    depends_on: "ruby-tests"
