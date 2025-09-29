@@ -1,3 +1,3 @@
-# merge-queue
+Repository for testing code coverage
 
-Repository for testing coverage using a merge queue workflow
+See scripts/* for a way to generate PRs with coverage for testing coverage on PRs
