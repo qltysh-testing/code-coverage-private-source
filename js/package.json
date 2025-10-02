@@ -1,0 +1,15 @@
+{
+  "name": "code-coverage-js-tests",
+  "version": "1.0.0",
+  "description": "JavaScript test suites for coverage tagging demo",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": ["testing", "coverage"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
