@@ -34,7 +34,31 @@ jobs:
       - name: Run the default task
         run: bundle exec rspec --require spec_helper
 
-      - uses: qltysh/qlty-action/coverage@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install JavaScript dependencies
+        run: |
+          cd js
+          npm ci
+
+      - name: Run JavaScript tests with coverage
+        run: |
+          cd js
+          npm run test:coverage
+
+      - name: Publish Ruby coverage
+        uses: qltysh/qlty-action/coverage@v2
         with:
           oidc: true
           files: coverage/coverage.json
+          tag: ruby
+
+      - name: Publish JavaScript coverage
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          oidc: true
+          files: js/coverage/lcov.info
+          tag: javascript
