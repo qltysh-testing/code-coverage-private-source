@@ -7,6 +7,7 @@ SimpleCov.start do
       SimpleCov::Formatter::HTMLFormatter
     ])
     add_filter '/spec/'
+    track_files "lib/**/*.rb"
 end
 
 require "sample"
