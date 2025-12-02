@@ -3,14 +3,16 @@
 
 require 'fileutils'
 require 'open3'
+require 'optparse'
 require 'securerandom'
 
 class PullRequestGenerator
   TEMPLATE_LIB_DIR = 'lib/test1'
   TEMPLATE_SPEC_DIR = 'spec/test1'
 
-  def initialize(count)
+  def initialize(count, coverage: true)
     @count = count
+    @coverage = coverage
     @base_branch = current_branch
     @used_directories = []
   end
@@ -63,16 +65,27 @@ class PullRequestGenerator
     # Push branch and create PR
     run_command("git push -u origin #{branch_name}")
     
-    pr_body = <<~BODY
-      ## Summary
-      - Added new #{module_name} module in lib/#{dir_name}
-      - Includes calculator functionality wrapped in module namespace
-      - Added comprehensive test coverage
+    pr_body = if @coverage
+                <<~BODY
+                  ## Summary
+                  - Added new #{module_name} module in lib/#{dir_name}
+                  - Includes calculator functionality wrapped in module namespace
+                  - Added comprehensive test coverage
 
-      ## Files Changed
-      - `lib/#{dir_name}/calculator#{number}.rb` - Module implementation
-      - `spec/#{dir_name}/calculator#{number}_spec.rb` - Test suite
-    BODY
+                  ## Files Changed
+                  - `lib/#{dir_name}/calculator#{number}.rb` - Module implementation
+                  - `spec/#{dir_name}/calculator#{number}_spec.rb` - Test suite
+                BODY
+              else
+                <<~BODY
+                  ## Summary
+                  - Added new #{module_name} module in lib/#{dir_name}
+                  - Includes calculator functionality wrapped in module namespace
+
+                  ## Files Changed
+                  - `lib/#{dir_name}/calculator#{number}.rb` - Module implementation
+                BODY
+              end
     
     run_command("gh pr create --title \"Add #{module_name} module\" --body \"#{pr_body}\"")
     puts "Pull request created for #{branch_name}"
@@ -98,20 +111,22 @@ class PullRequestGenerator
     File.write(dest_lib_file, updated_content)
     puts "Created file: #{dest_lib_file}"
     
+    return unless @coverage
+
     # Copy spec template
     spec_dest_dir = "spec/#{dir_name}"
     FileUtils.mkdir_p(spec_dest_dir)
-    
+
     # Read template spec file
     template_spec_file = Dir.glob("#{TEMPLATE_SPEC_DIR}/*.rb").first
     template_spec_content = File.read(template_spec_file)
-    
+
     # Update references in spec
     updated_spec_content = template_spec_content.gsub('test1', dir_name)
                                                 .gsub('Test1', "Test#{number}")
                                                 .gsub('Calculator1', "Calculator#{number}")
                                                 .gsub('calculator1', "calculator#{number}")
-    
+
     # Write to new location
     dest_spec_file = "#{spec_dest_dir}/calculator#{number}_spec.rb"
     File.write(dest_spec_file, updated_spec_content)
@@ -142,8 +157,24 @@ class PullRequestGenerator
 end
 
 # Main execution
+options = { coverage: true }
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: ruby create_pull_requests.rb [options] <number_of_prs>"
+
+  opts.on("--no-coverage", "Skip creating spec files (no test coverage)") do
+    options[:coverage] = false
+  end
+
+  opts.on("-h", "--help", "Show this help message") do
+    puts opts
+    exit
+  end
+end.parse!
+
 if ARGV.empty?
-  puts "Usage: ruby create_pull_requests.rb <number_of_prs>"
+  puts "Usage: ruby create_pull_requests.rb [options] <number_of_prs>"
+  puts "Use --help for more information"
   exit 1
 end
 
@@ -153,5 +184,5 @@ if count <= 0
   exit 1
 end
 
-generator = PullRequestGenerator.new(count)
+generator = PullRequestGenerator.new(count, coverage: options[:coverage])
 generator.generate
