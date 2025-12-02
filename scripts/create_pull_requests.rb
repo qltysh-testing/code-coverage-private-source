@@ -3,6 +3,7 @@
 
 require 'fileutils'
 require 'open3'
+require 'securerandom'
 
 class PullRequestGenerator
   TEMPLATE_LIB_DIR = 'lib/test1'
@@ -55,7 +56,8 @@ class PullRequestGenerator
     # Stage and commit changes
     run_command("git add .")
     module_name = "Test#{number}"
-    commit_message = "Add #{module_name} module with calculator functionality"
+    unique_id = SecureRandom.hex(8)
+    commit_message = "Add #{module_name} module with calculator functionality [#{unique_id}]"
     run_command("git commit -m \"#{commit_message}\"")
     
     # Push branch and create PR
