@@ -53,6 +53,12 @@ test_patterns = [
   "**/spec_*.*",
 ]
 
+[coverage]
+ignores = [
+  "**/test1/**",
+  "**/test2/**",
+]
+
 [smells]
 mode = "comment"
 
@@ -63,7 +69,7 @@ default = true
 [[source]]
 name = "private-test-source"
 repository = "git@github.com:qltysh-testing/private-test-source.git"
-branch = "main"
+branch = "test-ignore-qlty-toml-only"
 
 [[plugin]]
 name = "markdownlint"
