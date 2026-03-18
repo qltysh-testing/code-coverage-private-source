@@ -53,6 +53,12 @@ test_patterns = [
   "**/spec_*.*",
 ]
 
+[coverage]
+ignores = [
+  "**/test1/**",
+  "**/test2/**",
+]
+
 [smells]
 mode = "comment"
 
