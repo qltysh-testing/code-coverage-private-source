@@ -53,6 +53,9 @@ test_patterns = [
   "**/spec_*.*",
 ]
 
+# Coverage ignores are defined in the private-test-source source.toml
+# This tests that source-level coverage ignores work without local overrides
+
 [smells]
 mode = "comment"
 
