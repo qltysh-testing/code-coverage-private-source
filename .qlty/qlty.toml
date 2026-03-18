@@ -60,6 +60,10 @@ mode = "comment"
 name = "default"
 default = true
 
+[[source]]
+name = "private-test-source"
+repository = "git@github.com:qltysh-testing/private-test-source.git"
+branch = "main"
 
 [[plugin]]
 name = "markdownlint"
