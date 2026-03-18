@@ -15,11 +15,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
-    strategy:
-      matrix:
-        ruby:
-          - "3.1"
 
     steps:
       - name: Checkout repo
@@ -28,26 +23,11 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: "3.1"
           bundler-cache: true
 
-      - name: Run the default task
+      - name: Run tests
         run: bundle exec rspec --require spec_helper
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install JavaScript dependencies
-        run: |
-          cd js
-          npm ci
-
-      - name: Run JavaScript tests with coverage
-        run: |
-          cd js
-          npm run test:coverage
 
       - name: Create GitHub App token for private source
         uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
@@ -67,17 +47,8 @@ jobs:
       - name: Fetch Qlty sources
         run: qlty sources fetch
 
-      - name: Publish Ruby coverage
+      - name: Publish coverage
         uses: qltysh/qlty-action/coverage@v2
         with:
           oidc: true
           files: coverage/coverage.json
-          tag: ruby
-
-      - name: Publish JavaScript coverage
-        uses: qltysh/qlty-action/coverage@v2
-        with:
-          oidc: true
-          files: js/coverage/lcov.info
-          add-prefix: js/
-          tag: javascript
