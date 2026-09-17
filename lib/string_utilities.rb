@@ -24,4 +24,10 @@ class StringUtilities
   def self.count_words(str)
     str.split.length
   end
+
+  def self.truncate(str, length)
+    return str if str.length <= length
+
+    "#{str[0, length]}..."
+  end
 end
