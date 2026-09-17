@@ -10,7 +10,6 @@ on:
 permissions:
   actions: write
   contents: read
-  id-token: write
 
 jobs:
   build:
@@ -49,6 +48,7 @@ jobs:
 
       - name: Publish coverage
         uses: qltysh/qlty-action/coverage@v2
+        env:
+          QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
         with:
-          oidc: true
           files: coverage/coverage.json
